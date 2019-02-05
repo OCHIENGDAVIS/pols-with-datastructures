@@ -1,3 +1,4 @@
+
 parties = []
 
 class Party:
@@ -18,6 +19,7 @@ class Party:
 
         }
         parties.append(new_party)
+        return new_party
 
     @classmethod
     def get_all_parties(cls):
