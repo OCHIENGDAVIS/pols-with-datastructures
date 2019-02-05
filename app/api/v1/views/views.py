@@ -1,7 +1,7 @@
 from  flask import jsonify, request
 from flask import Blueprint
-from app.api.v1.models.party_model import Party
-from app.api.v1.utils import validate_party_info
+from app.api.v1.models.party_model import Party, parties
+from app.api.v1.utils import validate_party_info, find_by_id
 
 
 
@@ -34,9 +34,18 @@ def create_a_party():
 
 
 
-@api.route('/parties/<int:id>', methods = ['GET'])
-def get_a_party(id):
-    pass
+@api.route('/parties/<int:party_id>', methods = ['GET'])
+def get_a_party(party_id):
+    if not isinstance(party_id, int):
+        return jsonify({"message": "id must be an integer"}), 400
+    elif party_id < 0:
+        return jsonify({"message": "Id can not be a negative"}), 400
+    else:
+        for party in parties:
+            if party['id'] == party_id:
+                return jsonify(party), 200
+        return jsonify({"message":"party do not exists"}), 404
+
 
 @api.route('/parties/<int:id>', methods = ['DELETE'])
 def delete_a_party(id):

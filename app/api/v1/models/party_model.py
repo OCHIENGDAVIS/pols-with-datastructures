@@ -25,7 +25,6 @@ class Party:
         return new_party
 
     @classmethod
-
     def get_all_parties(cls):
         """A method to get all parties"""
         return {

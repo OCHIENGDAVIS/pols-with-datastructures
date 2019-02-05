@@ -48,6 +48,14 @@ class TestParty(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content_type, "application/json")
 
+    def test_get_specific_party(self):
+        """Tests the getting of a specific party"""
+        with self.app.test_client() as c:
+            response = c.get("/api/v1/parties/1")
+            self.assertEqual(response.status_code, 200)
+     
+
+
         
 
 
