@@ -11,12 +11,14 @@ class TestParty(TestCase):
         self.party = Party(1, "NASA", "Capital Hill", "https://www.nasa.co.ke/img/nasa.png")
 
     def test_init_method(self):
+        """Tests the Party Constructor"""
         self.assertEqual(self.party.id, 1)
         self.assertEqual(self.party.name, 'NASA')
         self.assertEqual(self.party.hqAddress, 'Capital Hill')
         self.assertEqual(self.party.logoUrl, 'https://www.nasa.co.ke/img/nasa.png')
 
     def test_create_party(self):
+        """Tests the creating of a party"""
         data = dict(
             id=1,
             name="Jubilee",
@@ -33,9 +35,20 @@ class TestParty(TestCase):
 
 
     def test_party_exists_after_creation(self):
+        """Tests whether a party exists after creating it"""
         self.party.create_party(self.party.id, self.party.name, self.party.hqAddress,self.party.logoUrl)
         found_party = find_by_id(self.party.id)
         self.assertTrue(found_party, msg="Party did not get created!")
+
+
+    def test_get_all_parties(self):
+        """Test whether the API can list all products"""
+        with self.app.test_client() as c:
+            response = c.get("/api/v1/parties")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.content_type, "application/json")
+
+        
 
 
 

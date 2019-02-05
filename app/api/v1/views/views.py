@@ -11,7 +11,7 @@ api = Blueprint('api', __name__)
 @api.route('/parties', methods = ['GET'])
 def get_all_parties():
     all_parties = Party.get_all_parties()
-    return jsonify(all_parties)
+    return jsonify(all_parties), 200
 
 
 @api.route('/parties', methods = ['POST'])
