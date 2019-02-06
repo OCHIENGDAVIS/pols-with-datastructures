@@ -1,7 +1,8 @@
 from  flask import jsonify, request
 from flask import Blueprint
 from app.api.v1.models.party_model import Party, parties
-from app.api.v1.utils import validate_party_info, find_by_id
+from app.api.v1.models.office_model import Office, offices
+from app.api.v1.utils import validate_party_info, find_item_by_id
 
 
 
@@ -102,13 +103,72 @@ def edit_a_party(party_id):
 
 @api.route('/offices', methods = ['GET'])
 def get_all_offices():
-    pass
+    data = []
+    for office in offices:
+        temp_office = {
+            "id": office["id"],
+            "type": office["type"],
+            "name": office["name"]
+        }
+        data.append(temp_office)
+    return jsonify({
+        "status": 200,
+        "data": data
+    }), 200
+
 
 @api.route('/offices', methods = ['POST'])
 def create_an_office():
-    pass
+    data = request.get_json()
+    office_id = data.get("id", None)
+    office_type = data.get("type", None)
+    office_name  = data.get("name")
+    if office_id is None:
+        return jsonify({"message": "Id is required"}), 400
+    elif office_type is None:
+        return jsonify({"message": "Type required"}), 400
+    elif office_name is None:
+        return jsonify({"message": "Name is required "}), 400
+    elif find_item_by_id(office_id, offices):
+        return jsonify({"message": "Office with that ID already exists"}), 400
+    else:
+        new_office = Office.create_office(office_id, office_type, office_name)
+        return jsonify({
+            "status": 201,
+            "data" : [{
+                "id":new_office["id"],
+                "type": new_office["type"],
+                "name": new_office["name"]
+            }  ]
+        }), 201
 
-@api.route('/offices/<int:id>', methods = ['GET'])
-def get_an_office():
-    pass
 
+@api.route('/offices/<int:office_id>', methods = ['GET'])
+def get_an_office(office_id):
+    if not isinstance(office_id, int):
+        return jsonify({
+            "status": 400,
+            "message": "the id must be an integer"
+        }), 400
+    elif office_id < 0:
+        return jsonify({
+            "status": 400,
+            "message": "ID must be an positive integer"
+        })
+    else:
+        for office in offices:
+            if office["id"] == office_id:
+                return jsonify({
+                    "status": 200,
+                    "data":[{
+                        "id": office["id"],
+                        "type" : office["type"],
+                        "name": office["name"]
+                    } ]
+                }),200
+        return jsonify({
+            "status": 404,
+            "data": [{
+                "message":"Office do not exists"
+            }]
+        })
