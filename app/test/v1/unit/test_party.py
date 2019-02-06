@@ -1,7 +1,8 @@
 import json
 from unittest import TestCase
-from app.api.v1.models.party_model import Party, parties
-from app.api.v1.utils import find_by_id, find_by_name
+from app.api.v1.models.party_model import Party
+from app.api.v1.models.office_model import Office
+from app.api.v1.utils import find_by_id
 from app.main import create_app
 from app.instance import config
 
@@ -95,6 +96,7 @@ class TestParty(TestCase):
                         }])
 
     def test_invalid_delete(self):
+        """Tests for deleting a party that is noe their"""
         with self.app.test_client() as c:
             response = c.delete("/api/v1/parties/10")
             self.assertEqual(response.status_code, 404)
@@ -104,6 +106,50 @@ class TestParty(TestCase):
             self.assertListEqual(response_data, [{
                 "message": "party does not exists"
             }])
+
+
+class TestOffice(TestCase):
+
+    def setUp(self):
+        self.app =create_app(config)
+        self.office =Office(1, "local government", "office of the MCA")
+
+    def test_init_method(self):
+        self.assertEqual(self.office.id, 1)
+        self.assertEqual(self.office.type, "local government")
+        self.assertEqual(self.office.name, "office of the MCA")
+
+    def test_create_office(self):
+        """Tests the creating of a new office"""
+        data = dict(
+            id=1,
+            type="Local government",
+            name="Office of the MCA",
+        )
+        with self.app.test_client() as c:
+            response = c.post("/api/v1/offices", data=json.dumps(data), content_type="application/json")
+            self.assertEqual(response.status_code, 201)
+            response_msg = json.loads(response.data.decode("UTF-8"))
+            self.assertEqual(response_msg['status'], 201)
+            self.assertListEqual(response_msg['data'], [{'id': 1, 'type': "Local government", "name": "Office of the MCA"}])
+
+
+    def test_office_already_exists(self):
+        data = dict(
+            id=1,
+            type="Local government",
+            name="Office of the MCA",
+        )
+        with self.app.test_client() as c:
+            c.post("/api/v1/offices", data=json.dumps(data), content_type="application/json")
+            new_post = c.post("/api/v1/offices", data=json.dumps(data), content_type="application/json")
+            self.assertEqual(new_post.status_code, 400)
+            response_msg = json.loads(new_post.data.decode("UTF-8"))
+            self.assertEqual(response_msg["message"], "Office with that ID already exists")
+
+
+
+
 
 
 

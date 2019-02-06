@@ -46,9 +46,9 @@ def find_by_id(_id):
     return False
 
 
-def find_by_name(item_name, item_iterable):
+def find_item_by_id(item_id, item_iterable):
     """A utility function to find a particular party by name"""
-    if next(filter(lambda x: x['name'] == item_name, item_iterable), None):
+    if next(filter(lambda x: x['id'] == item_id, item_iterable), None):
         return True
     else:
         return False
