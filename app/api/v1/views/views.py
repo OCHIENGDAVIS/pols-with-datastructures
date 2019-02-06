@@ -47,9 +47,32 @@ def get_a_party(party_id):
         return jsonify({"message":"party do not exists"}), 404
 
 
-@api.route('/parties/<int:id>', methods = ['DELETE'])
-def delete_a_party(id):
-    pass
+@api.route('/parties/<int:party_id>', methods = ['DELETE'])
+def delete_a_party(party_id):
+    if not isinstance(party_id, int):
+        return jsonify({"message": "ID must be an integer"}), 400
+    elif party_id < 0:
+        return jsonify({"message": "ID must not be a negative integer"}), 400
+    else:
+        for party in parties:
+            if party['id'] == party_id:
+                party_index = parties.index(party)
+                del(parties[party_index])
+                return jsonify({
+                    "status": 200,
+                    "data": [
+                        {
+                            "message": "party deleted successfully"
+                        }
+                    ]
+                }), 200
+        return jsonify({
+            "status":404,
+            "data": [{
+                "message": "party does not exists"
+            }]
+        }), 404
+
 
 @api.route('/parties/<int:party_id>/name', methods = ['PATCH'])
 def edit_a_party(party_id):

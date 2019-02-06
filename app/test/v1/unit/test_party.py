@@ -52,21 +52,63 @@ class TestParty(TestCase):
         """Tests the getting of a specific party"""
         with self.app.test_client() as c:
             response = c.get("/api/v1/parties/1")
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200, msg="party was not found")
 
     def test_edit_party(self):
         """Tests that the API edit a party endpoint can edit a party"""
         with self.app.test_client() as c:
-            data = json.dumps(dict(
+            data = dict(
+                id=1,
+                name="Jubilee",
+                hqAddress="Jubilee House",
+                logoUrl="https:www.jubilee.co.ke/logo.png"
+            )
+            c.post("/api/v1/parties", data=json.dumps(data), content_type="application/json")
+            new_data = json.dumps(dict(
                 name = "New party name"
             ))
-            response =c.patch("/api/v1/parties/1/name", data=data, content_type="application/json")
-            self.assertEqual(response.status_code, 200)
+            response =c.patch("/api/v1/parties/1/name", data=new_data, content_type="application/json")
+            self.assertEqual(response.status_code, 200, msg="party edit failed")
             response_msg = json.loads(response.data.decode("UTF-8"))
             self.assertIn("status" , response_msg)
             self.assertEqual(response_msg["status"], 200)
             expected_party_data = response_msg["data"]
             self.assertListEqual(expected_party_data, [{"id":1, "name":"New party name"}])
+
+    def test_delete_party(self):
+        """Tests the delete part endpoint of the API"""
+        with self.app.test_client() as c:
+            data = dict(
+                id=1,
+                name="Jubilee",
+                hqAddress="Jubilee House",
+                logoUrl="https:www.jubilee.co.ke/logo.png"
+            )
+            c.post("/api/v1/parties", data=json.dumps(data), content_type="application/json")
+            response = c.delete("/api/v1/parties/1")
+            self.assertEqual(response.status_code, 200)
+            response_msg = json.loads(response.data.decode("UTF-8"))
+            self.assertIn("status", response_msg)
+            response_data = response_msg["data"]
+            self.assertListEqual(response_data, [{
+                            "message": "party deleted successfully"
+                        }])
+
+    def test_invalid_delete(self):
+        with self.app.test_client() as c:
+            response = c.delete("/api/v1/parties/10")
+            self.assertEqual(response.status_code, 404)
+            response_msg = json.loads(response.data.decode("UTF-8"))
+            self.assertIn("status", response_msg)
+            response_data = response_msg["data"]
+            self.assertListEqual(response_data, [{
+                "message": "party does not exists"
+            }])
+
+
+
+
+
 
      
 
