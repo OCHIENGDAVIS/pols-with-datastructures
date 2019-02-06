@@ -148,6 +148,14 @@ class TestOffice(TestCase):
             self.assertEqual(response_msg["message"], "Office with that ID already exists")
 
 
+    def test_get_all_parties(self):
+        with self.app.test_client() as c:
+            response = c.get("/api/v1/parties")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.content_type, "application/json")
+
+
+
 
 
 
