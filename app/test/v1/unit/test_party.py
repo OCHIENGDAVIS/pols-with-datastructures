@@ -53,6 +53,21 @@ class TestParty(TestCase):
         with self.app.test_client() as c:
             response = c.get("/api/v1/parties/1")
             self.assertEqual(response.status_code, 200)
+
+    def test_edit_party(self):
+        """Tests that the API edit a party endpoint can edit a party"""
+        with self.app.test_client() as c:
+            data = json.dumps(dict(
+                name = "New party name"
+            ))
+            response =c.patch("/api/v1/parties/1/name", data=data, content_type="application/json")
+            self.assertEqual(response.status_code, 200)
+            response_msg = json.loads(response.data.decode("UTF-8"))
+            self.assertIn("status" , response_msg)
+            self.assertEqual(response_msg["status"], 200)
+            expected_party_data = response_msg["data"]
+            self.assertListEqual(expected_party_data, [{"id":1, "name":"New party name"}])
+
      
 
 
