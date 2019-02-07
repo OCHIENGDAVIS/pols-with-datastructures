@@ -25,3 +25,21 @@ class TestOffice(BaseTest):
             response_msg = json.loads(response.data.decode("UTF-8"))
             self.assertEqual(
                 response_msg["message"], "Office with that ID already exists")
+
+    def test_get_office(self):
+        with self.app_context():
+            response = self.app.get("/api/v1/offices/1")
+            self.assertEqual(response.status_code, 200,
+                             msg="Error office did not return 200 OK")
+            response_msg = json.loads(response.data.decode("UTF-8"))
+            self.assertListEqual(response_msg["data"], [{
+                "id": 1,
+                "type": "Local government",
+                "name": "Office of the MCA"
+            }])
+
+    def test_get_office_not_found(self):
+        with self.app_context():
+            response = self.app.get("/api/v1/1000")
+            self.assertEqual(response.status_code, 404,
+                             msg="Error get party not found dir not return 404")
