@@ -1,4 +1,4 @@
-from app.api.v1.models.party_model import parties
+from app.api.v1.models.party_models import parties
 
 
 def validate_party_info(party_dict):

@@ -1,8 +1,8 @@
 """A  module to run the application"""
-from app.instance import config
-from app.main import create_app
+from app import create_app
+from instance import config
 
 
 if __name__ == '__main__':
-    app = create_app(config)
-    app.run()
+    app = create_app(config.DevelopmentConfig)
+    app.run(debug=True)

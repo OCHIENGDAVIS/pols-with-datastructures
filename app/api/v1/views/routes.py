@@ -1,17 +1,27 @@
 from flask import jsonify, request
 from flask import Blueprint
-from app.api.v1.models.party_model import Party, parties
-from app.api.v1.models.office_model import Office, offices
+from app.api.v1.models.party_models import Party, parties
+from app.api.v1.models.office_models import Office, offices
 from app.api.v1.utils import validate_party_info, find_item_by_id
-
 
 api = Blueprint('api', __name__)
 
 
 @api.route('/parties', methods=['GET'])
 def get_all_parties():
-    all_parties = Party.get_all_parties()
-    return jsonify(all_parties), 200
+    data = []
+    for party in parties:
+        temp_party = {
+            # "id": party["id"],
+            "name": party["name"],
+            "hqAddress": party["hqAddress"],
+            "logoUrl": party["logoUrl"]
+        }
+        data.append(temp_party)
+    return jsonify({
+        "status": 200,
+        "data": data
+    }), 200
 
 
 @api.route('/parties', methods=['POST'])
