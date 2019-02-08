@@ -14,7 +14,7 @@ def get_all_parties():
     data = []
     for party in parties:
         temp_party = {
-            # "id": party["id"],
+            "id": party["id"],
             "name": party["name"],
             "hqAddress": party["hqAddress"],
             "logoUrl": party["logoUrl"]
