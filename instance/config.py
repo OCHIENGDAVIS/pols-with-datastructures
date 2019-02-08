@@ -1,3 +1,4 @@
+"""Configuration file"""
 import os
 
 

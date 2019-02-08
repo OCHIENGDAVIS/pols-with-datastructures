@@ -1,3 +1,5 @@
+"""A module mocking the office database"""
+
 offices = []
 
 

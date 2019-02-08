@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from flask import Blueprint
+"""Module for handling requests and request routings"""
 from app.api.v1.models.party_models import Party, parties
 from app.api.v1.models.office_models import Office, offices
 from app.api.v1.utils import validate_party_info, find_item_by_id
@@ -9,6 +10,7 @@ api = Blueprint('api', __name__)
 
 @api.route('/parties', methods=['GET'])
 def get_all_parties():
+    """Gets all parties"""
     data = []
     for party in parties:
         temp_party = {
@@ -26,6 +28,7 @@ def get_all_parties():
 
 @api.route('/parties', methods=['POST'])
 def create_a_party():
+    """Creates a party"""
     data = request.get_json()
     validation_response = validate_party_info(data)
     if validation_response is None:
@@ -46,6 +49,7 @@ def create_a_party():
 
 @api.route('/parties/<int:party_id>', methods=['GET'])
 def get_a_party(party_id):
+    """Gets a specific party"""
     if not isinstance(party_id, int):
         return jsonify({"message": "id must be an integer"}), 400
     elif party_id < 0:
@@ -59,6 +63,7 @@ def get_a_party(party_id):
 
 @api.route('/parties/<int:party_id>', methods=['DELETE'])
 def delete_a_party(party_id):
+    """deletes a specific party"""
     if not isinstance(party_id, int):
         return jsonify({"message": "ID must be an integer"}), 400
     elif party_id < 0:
@@ -86,7 +91,10 @@ def delete_a_party(party_id):
 
 @api.route('/parties/<int:party_id>/name', methods=['PATCH'])
 def edit_a_party(party_id):
+    """Edits a specific party"""
     data = request.get_json()
+    if not data:
+        return jsonify({"message": "You must provide data for editng a party"}), 400
     name = data.get("name", None)
     if not isinstance(party_id, int):
         return jsonify({"message": "ID must be an integer"}), 400
@@ -112,6 +120,7 @@ def edit_a_party(party_id):
 
 @api.route('/offices', methods=['GET'])
 def get_all_offices():
+    """Gets all offices"""
     data = []
     for office in offices:
         temp_office = {
@@ -128,7 +137,10 @@ def get_all_offices():
 
 @api.route('/offices', methods=['POST'])
 def create_an_office():
+    """"creates a specific office"""
     data = request.get_json()
+    if not data:
+        return jsonify({"message": "You must provide data to create the office"}), 400
     office_id = data.get("id", None)
     office_type = data.get("type", None)
     office_name = data.get("name")
@@ -137,7 +149,11 @@ def create_an_office():
     elif office_type is None:
         return jsonify({"message": "Type required"}), 400
     elif office_name is None:
-        return jsonify({"message": "Name is required "}), 400
+        return jsonify({"message": "Name is required"}), 400
+    elif not isinstance(office_id, int):
+        return jsonify({"message": "Office id must be an integer"}), 400
+    elif not isinstance(office_name, str):
+        return jsonify({"message": "Office name must be a string"}), 400
     elif find_item_by_id(office_id, offices):
         return jsonify({"message": "Office with that ID already exists"}), 400
     else:
@@ -154,6 +170,7 @@ def create_an_office():
 
 @api.route('/offices/<int:office_id>', methods=['GET'])
 def get_an_office(office_id):
+    """Gets a specific office"""
     if not isinstance(office_id, int):
         return jsonify({
             "status": 400,
@@ -180,4 +197,14 @@ def get_an_office(office_id):
             "data": [{
                 "message": "Office do not exists"
             }]
-        })
+        }), 404
+
+
+def bad_request(error):
+    """defines custom  error handler for bad requests"""
+    return jsonify({"message": "Something realy terrible happened......dont' wory!   it's NOT your fault ......MAYBE it is!"}), 400
+
+
+def not_found_error(error):
+    """Defines custom error handler for not found errors"""
+    return jsonify({"message": "The url is not found on the server please check agian or make sure its typed correctly"}), 404

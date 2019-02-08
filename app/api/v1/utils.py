@@ -4,6 +4,8 @@ from app.api.v1.models.party_models import parties
 def validate_party_info(party_dict):
     """A utility function to validate party inputs"""
     data = party_dict
+    if not data:
+        return {"message": "party data must be provided", "code": 400}
     id = data.get("id", None)
     name = data.get('name', None)
     hqAddress = data.get("hqAddress", None)
@@ -24,11 +26,9 @@ def validate_party_info(party_dict):
         return {"message": "hqaddress  can not be an empty string", "code": 400}
     elif logoUrl is None:
         return {"message": "party logo Url is required", "code": 400}
-    elif len(logoUrl) < 1:
-        return {"message": "Logo url  can not be an empty string", "code": 400}
     elif not isinstance(logoUrl, str):
         return {"message": "logo must be a string", "code": 400}
-    elif next(filter(lambda x: x['id'] == id, parties), None):
+    elif isinstance(id, int) and next(filter(lambda x: x['id'] == id, parties), None):
         return {"message": "party with that id already exists", "code": 400}
 
 

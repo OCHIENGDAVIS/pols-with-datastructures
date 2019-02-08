@@ -1,12 +1,14 @@
+"""A module defining the Base Test Class"""
 from unittest import TestCase
 from app import create_app
 from instance import config
 
 
 class BaseTest(TestCase):
-    """Parent class to every test class"""
+    """Base Test Class to every test class"""
 
     def setUp(self):
+        """Set up the testing data and Test object attributes """
         app = create_app(config.DevelopmentConfig)
         self.app = app.test_client()
         self.app_context = app.app_context

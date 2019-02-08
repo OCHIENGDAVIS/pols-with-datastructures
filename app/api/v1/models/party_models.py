@@ -1,4 +1,4 @@
-
+"""A module mocking a party database"""
 parties = []
 
 
