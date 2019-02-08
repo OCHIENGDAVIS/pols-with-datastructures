@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/OCHIENGDAVIS/pols-with-datastructures.svg?branch=develop)](https://travis-ci.org/OCHIENGDAVIS/pols-with-datastructures) [![Coverage Status](https://coveralls.io/repos/github/OCHIENGDAVIS/pols-with-datastructures/badge.svg?branch=develop)](https://coveralls.io/github/OCHIENGDAVIS/pols-with-datastructures?branch=develop)[![Maintainability](https://api.codeclimate.com/v1/badges/8c94e63cb24e332dd416/maintainability)](https://codeclimate.com/github/OCHIENGDAVIS/pols-with-datastructures/maintainability)
+[![Build Status](https://travis-ci.org/OCHIENGDAVIS/pols-with-datastructures.svg?branch=develop)](https://travis-ci.org/OCHIENGDAVIS/pols-with-datastructures) [![Coverage Status](https://coveralls.io/repos/github/OCHIENGDAVIS/pols-with-datastructures/badge.svg?branch=develop)](https://coveralls.io/github/OCHIENGDAVIS/pols-with-datastructures?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/8c94e63cb24e332dd416/maintainability)](https://codeclimate.com/github/OCHIENGDAVIS/pols-with-datastructures/maintainability)
 
 # POLITICO
 Politico is an application that enables citizens give their mandate to politicians running for different government offices while building trust in the process through transparency. It has the following functionalities :
@@ -19,6 +19,7 @@ Politico is an application that enables citizens give their mandate to politicia
 - Run the application server using the command ` python run.py `
 
 #Running Tests
+
 - Do `pytest --cov=app  tests/`
 
 # Endpoints
@@ -36,7 +37,9 @@ Politico is an application that enables citizens give their mandate to politicia
 
 #Heroku Application
 
+
 #Authors
+
 Davis Ochieng
 
 
