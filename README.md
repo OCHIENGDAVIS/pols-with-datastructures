@@ -20,7 +20,7 @@ Politico is an application that enables citizens give their mandate to politicia
 
 #Running Tests
 
-- Do `pytest --cov=app  tests/`
+- Do `pytest --cov=app `
 
 # Endpoints
 
@@ -29,16 +29,16 @@ Politico is an application that enables citizens give their mandate to politicia
 | POST /api/v1/parties    | Create a political party |
 | GET /api/v1/parties/<party_id>     | Fetch a particular political party record   |
 | GET /api/v1/parties | Fetch all political parties records      |
-| PATCH /api/v1/parties/<partyt_id>/name | Edit the name of a political party      |
+| PATCH /api/v1/parties/<party_id>/name | Edit the name of a political party      |
 | DELETE /api/v1/parties/<party_id>  | Delete a specific political party    |
 | POST /api/v1/offices | Create a political office     |
 | GET /api/v1/offices | Fetch all political offices records      |
 | GET /api/v1/offices<office_id> | Fetch a specific  political office records      |
 
-#Heroku Application
+# Heroku Application
 
 
-#Authors
+# Authors
 
 Davis Ochieng
 
