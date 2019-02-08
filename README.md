@@ -18,7 +18,7 @@ Politico is an application that enables citizens give their mandate to politicia
 - Install the requirements `pip install -r requirements.txt`
 - Run the application server using the command ` python run.py `
 
-#Running Tests
+# Running Tests
 
 - Do `pytest --cov=app `
 
@@ -37,6 +37,7 @@ Politico is an application that enables citizens give their mandate to politicia
 
 # Heroku Application
 
+[Acces the app here](https://pols-with-datastructures.herokuapp.com/api/v1/parties)
 
 
 # Authors
