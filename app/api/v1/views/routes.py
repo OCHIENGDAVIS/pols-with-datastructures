@@ -3,7 +3,7 @@ from flask import Blueprint
 """Module for handling requests and request routings"""
 from app.api.v1.models.party_models import Party, parties
 from app.api.v1.models.office_models import Office, offices
-from app.api.v1.utils import validate_party_info, find_item_by_id
+from app.api.v1.utils import check_json, ValidateUserInput
 
 api = Blueprint('api', __name__)
 
@@ -29,93 +29,107 @@ def get_all_parties():
 @api.route('/parties', methods=['POST'])
 def create_a_party():
     """Creates a party"""
-    data = request.get_json()
-    validation_response = validate_party_info(data)
-    if validation_response is None:
-        new_party = Party.create_party(
-            data['id'], data['name'], data['hqAddress'], data['logoUrl'])
-        return jsonify({
-            "status": 201,
-            "data": [
-                {
+    user_input = request.get_json(force=True)
+    data = check_json(user_input)
+    if data:
+        id = ValidateUserInput.check_id(user_input.get("id"))
+        name = ValidateUserInput.check_string_types(user_input.get("name"))
+        hqAddress = ValidateUserInput.check_string_types(
+            user_input.get("hqAddress"))
+        logoUrl = ValidateUserInput.check_string_types(
+            user_input.get("logoUrl"))
+        exists = ValidateUserInput.item_exists(user_input.get("id"), parties)
+        if ((id and name and hqAddress)and(logoUrl)) and not exists:
+            new_party = Party.create_party(user_input.get("id"), user_input.get(
+                "name"), user_input.get("hqAddress"), user_input.get("logoUrl"))
+            return jsonify({
+                "status": 201,
+                "data": [{
                     "id": new_party["id"],
                     "name": new_party["name"]
-                },
-            ]
-        }), 201
-    else:
-        return jsonify({"message": validation_response['message']}), validation_response['code']
+                }]
+            }), 201
+    return jsonify({
+        "status": 400,
+        "data": [{
+            "message": "Check the data you are trying to send please"
+        }]
+    }), 400
 
 
 @api.route('/parties/<int:party_id>', methods=['GET'])
 def get_a_party(party_id):
-    """Gets a specific party"""
-    if not isinstance(party_id, int):
-        return jsonify({"message": "id must be an integer"}), 400
-    elif party_id < 0:
-        return jsonify({"message": "Id can not be a negative"}), 400
-    else:
-        for party in parties:
-            if party['id'] == party_id:
-                return jsonify(party), 200
-        return jsonify({"message": "party do not exists"}), 404
+    id_is_valid = ValidateUserInput.check_id(party_id)
+    if id_is_valid:
+        party = ValidateUserInput.find_by_id(party_id, parties)
+        if party is not None:
+            return jsonify({
+                "status": 200,
+                "data": [{
+                    "id": party["id"],
+                    "name": party["name"],
+                    "logoUrl": party["logoUrl"]
+                }]
+            }), 200
+    return jsonify({
+        "status": 404,
+        "data": [{
+            "message": "Please check the data you are trying to send!"
+        }]
+    }), 404
 
 
 @api.route('/parties/<int:party_id>', methods=['DELETE'])
 def delete_a_party(party_id):
     """deletes a specific party"""
-    if not isinstance(party_id, int):
-        return jsonify({"message": "ID must be an integer"}), 400
-    elif party_id < 0:
-        return jsonify({"message": "ID must not be a negative integer"}), 400
-    else:
-        for party in parties:
-            if party['id'] == party_id:
-                party_index = parties.index(party)
-                del(parties[party_index])
-                return jsonify({
-                    "status": 200,
-                    "data": [
-                        {
-                            "message": "party deleted successfully"
-                        }
-                    ]
-                }), 200
-        return jsonify({
-            "status": 404,
-            "data": [{
-                "message": "party does not exists"
-            }]
-        }), 404
+    id_is_valid = ValidateUserInput.check_id(party_id)
+    if id_is_valid:
+        party = ValidateUserInput.find_by_id(party_id, parties)
+        if party is not None:
+            party_index = parties.index(party)
+            del(parties[party_index])
+            return jsonify({
+                "status": 200,
+                "data": [
+                    {
+                        "message": "party deleted successfully"
+                    }
+                ]
+            }), 200
+    return jsonify({
+        "status": 404,
+        "data": [{
+            "message": "party does not exists"
+        }]
+    }), 404
 
 
 @api.route('/parties/<int:party_id>/name', methods=['PATCH'])
 def edit_a_party(party_id):
     """Edits a specific party"""
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "You must provide data for editng a party"}), 400
-    name = data.get("name", None)
-    if not isinstance(party_id, int):
-        return jsonify({"message": "ID must be an integer"}), 400
-    elif name is None:
-        return jsonify({'message': 'You must provide the new  name'}), 400
-    elif len(data['name']) < 0:
-        return jsonify({"message": "name cannot be empty"})
-    else:
-        for party in parties:
-            if party['id'] == party_id:
-                party['name'] = data['name']
+    user_input = request.get_json(force=True)
+    data = check_json(user_input)
+    if data:
+        name = ValidateUserInput.check_string_types(user_input.get("name"))
+        if name:
+            party_to_edit = ValidateUserInput.find_by_id(party_id, parties)
+            if party_to_edit is not None:
+                party_to_edit['name'] = user_input['name']
                 return jsonify({
                     "status": 200,
                     "data": [
                         {
-                            "id": party['id'],
-                            "name": party['name']
+                            "id": party_to_edit['id'],
+                            "name": party_to_edit['name']
                         }
                     ]
-                })
-        return jsonify({"message": "Party does not exists"}), 404
+                }), 200
+    return jsonify({
+        "status": 400,
+        "data": [{
+            "message": "Please check the data you are trying to submit"
+        }]
+    }), 400
 
 
 @api.route('/offices', methods=['GET'])
@@ -137,67 +151,53 @@ def get_all_offices():
 
 @api.route('/offices', methods=['POST'])
 def create_an_office():
-    """"creates a specific office"""
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "You must provide data to create the office"}), 400
-    office_id = data.get("id", None)
-    office_type = data.get("type", None)
-    office_name = data.get("name")
-    if office_id is None:
-        return jsonify({"message": "Id is required"}), 400
-    elif office_type is None:
-        return jsonify({"message": "Type required"}), 400
-    elif office_name is None:
-        return jsonify({"message": "Name is required"}), 400
-    elif not isinstance(office_id, int):
-        return jsonify({"message": "Office id must be an integer"}), 400
-    elif not isinstance(office_name, str):
-        return jsonify({"message": "Office name must be a string"}), 400
-    elif find_item_by_id(office_id, offices):
-        return jsonify({"message": "Office with that ID already exists"}), 400
-    else:
-        new_office = Office.create_office(office_id, office_type, office_name)
-        return jsonify({
-            "status": 201,
-            "data": [{
-                "id": new_office["id"],
-                "type": new_office["type"],
-                "name": new_office["name"]
-            }]
-        }), 201
+    """Creates an office"""
+    user_input = request.get_json(force=True)
+    data = check_json(user_input)
+    if data:
+        id = ValidateUserInput.check_id(user_input.get("id"))
+        name = ValidateUserInput.check_string_types(user_input.get("name"))
+        type = ValidateUserInput.check_string_types(
+            user_input.get("type"))
+        exists = ValidateUserInput.item_exists(user_input.get("id"), offices)
+        if (id and name and type)and not exists:
+            new_office = Office.create_office(user_input.get("id"), user_input.get(
+                "type"), user_input.get("name"))
+            return jsonify({
+                "status": 201,
+                "data": [{
+                    "id": new_office["id"],
+                    "name": new_office["name"]
+                }]
+            }), 201
+    return jsonify({
+        "status": 400,
+        "data": [{
+            "message": "Check the data you are trying to send please"
+        }]
+    }), 400
 
 
 @api.route('/offices/<int:office_id>', methods=['GET'])
 def get_an_office(office_id):
     """Gets a specific office"""
-    if not isinstance(office_id, int):
-        return jsonify({
-            "status": 400,
-            "message": "the id must be an integer"
-        }), 400
-    elif office_id < 0:
-        return jsonify({
-            "status": 400,
-            "message": "ID must be an positive integer"
-        })
-    else:
-        for office in offices:
-            if office["id"] == office_id:
-                return jsonify({
-                    "status": 200,
-                    "data": [{
-                        "id": office["id"],
-                        "type": office["type"],
-                        "name": office["name"]
-                    }]
-                }), 200
-        return jsonify({
-            "status": 404,
-            "data": [{
-                "message": "Office do not exists"
-            }]
-        }), 404
+    id_is_valid = ValidateUserInput.check_id(office_id)
+    if id_is_valid:
+        office = ValidateUserInput.find_by_id(office_id, offices)
+        if office is not None:
+            return jsonify({
+                "status": 200,
+                "data": [{
+                    "id": office["id"],
+                    "name": office["name"]
+                }]
+            }), 200
+    return jsonify({
+        "status": 400,
+        "data": [{
+            "message": "Please try and check the data you are trying to send "
+        }]
+    }), 400
 
 
 def bad_request(error):
