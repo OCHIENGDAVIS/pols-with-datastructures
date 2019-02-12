@@ -10,10 +10,11 @@ Politico is an application that enables citizens give their mandate to politicia
 - Users can vote for only one politician per political office
 -  Users can see the results of election 
 
-# Getting Started With Politico
+# How to install and run the App
 
-- Clone the repository by doing `git clone git@github.com:OCHIENGDAVIS/pols-with-datastructures.git`
-- Create a virtual environment `virtualenv env `
+- Clone the repository using this URL `git clone git@github.com:OCHIENGDAVIS/pols-with-datastructures.git`
+- `CD` into the cloned repo
+- Create a virtual environment  using python 3.7 `virtualenv env  --python=python3.7`
 - Activate the virtaul environment `source env/bin/activate` on Linux/Mac or `source env/Scripts/activate` on windows
 - Install the requirements `pip install -r requirements.txt`
 - Run the application server using the command ` python run.py `
@@ -26,14 +27,14 @@ Politico is an application that enables citizens give their mandate to politicia
 
 | Endpoint       | Functionality         | 
 | ------------- |:-------------
-| POST /api/v1/parties    | Create a political party |
-| GET /api/v1/parties/<party_id>     | Fetch a particular political party record   |
-| GET /api/v1/parties | Fetch all political parties records      |
-| PATCH /api/v1/parties/<party_id>/name | Edit the name of a political party      |
-| DELETE /api/v1/parties/<party_id>  | Delete a specific political party    |
-| POST /api/v1/offices | Create a political office     |
-| GET /api/v1/offices | Fetch all political offices records      |
-| GET /api/v1/offices<office_id> | Fetch a specific  political office records      |
+| POST localhost:5000/api/v1/parties    | Create a political party |
+| GET localhost:5000/api/v1/parties/<party_id>     | Fetch a particular political party record   |
+| GET localhost:5000/api/v1/parties | Fetch all political parties records      |
+| PATCH localhost:5000/api/v1/parties/<party_id>/name | Edit the name of a political party      |
+| DELETE localhost:5000/api/v1/parties/<party_id>  | Delete a specific political party    |
+| POST localhost:5000/api/v1/offices | Create a political office     |
+| GET localhost:5000/api/v1/offices | Fetch all political offices records      |
+| GET localhost:5000/api/v1/offices<office_id> | Fetch a specific  political office records      |
 
 # Heroku Application
 
