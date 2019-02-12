@@ -1,9 +1,9 @@
 """A module for testing the all party functionalities"""
 import json
 from tests.base_testcase import BaseTest
-from app.api.v1.models.party_models import Party
+from app.api.v1.models.party_models import Party, parties
 from app.api.v1.models.office_models import Office
-from app.api.v1.utils import find_by_id
+# from app.api.v1.utils import find_by_id
 
 
 class TestParty(BaseTest):
@@ -98,3 +98,6 @@ class TestParty(BaseTest):
             self.assertListEqual(response_data, [{
                 "message": "party does not exists"
             }])
+
+    def test_get_all_parties_class_method(self):
+        self.assertDictEqual(Party.get_all_parties(), {"parties": parties})
