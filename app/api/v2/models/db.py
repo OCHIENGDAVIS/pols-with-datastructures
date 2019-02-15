@@ -101,5 +101,11 @@ def tear_down():
     connection.close()
 
 
+def db_connection():
+    connection = psycopg2.connect(host=os.environ.get("DB_HOST"), database=os.environ.get(
+        "DB_NAME"), user=os.environ.get("DB_USER"), password=os.environ.get("DB_PASSWORD"))
+    return connection
+
+
 if __name__ == "__main__":
     db_init()
