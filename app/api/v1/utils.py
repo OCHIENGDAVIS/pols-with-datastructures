@@ -1,4 +1,5 @@
 
+
 def check_json(data):
     if not data:
         return False
