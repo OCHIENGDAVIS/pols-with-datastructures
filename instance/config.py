@@ -20,6 +20,7 @@ class DevelopmentConfig(Config):
     DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 
+
 class TestingConfig(Config):
     """Configurations for Testing"""
     TESTING = True
