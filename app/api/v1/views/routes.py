@@ -200,6 +200,16 @@ def get_an_office(office_id):
     }), 400
 
 
+@api.route('/', methods=['GET'])
+def home():
+    return(jsonify({
+        "status": 200,
+        "data": [{
+            "message": "Welcome to politica API, Remeber This is An API"
+        }]
+    }))
+
+
 def bad_request(error):
     """defines custom  error handler for bad requests"""
     return jsonify({"message": "Something realy terrible happened......dont' wory!   it's NOT your fault ......MAYBE it is!"}), 400
